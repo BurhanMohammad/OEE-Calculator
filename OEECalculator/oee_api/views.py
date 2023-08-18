@@ -27,15 +27,15 @@ class OEECalculation(generics.ListAPIView):
 
         if camera_name:
             queryset = queryset.filter(machine__name=camera_name)
-        
+
         if start_date and end_date:
             queryset = queryset.filter(log_date__range=[start_date, end_date])
-        
+
         oee_data = []
         for log in queryset:
             availability = calculate_availability(log.machine.available_time, log.machine.unplanned_downtime)
             performance = calculate_performance(log.machine.ideal_cycle_time, log.units_produced, log.machine.available_operating_time)
-            oee = calculate_oee(availability, performance)
+            oee = calculate_oee(availability, performance)  # Define 'oee' here
             
             if oee >= oee_threshold:
                 oee_data.append({
@@ -47,7 +47,8 @@ class OEECalculation(generics.ListAPIView):
                 })
 
         return oee_data
-    
+
+
     
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
